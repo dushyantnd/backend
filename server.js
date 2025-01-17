@@ -9,6 +9,7 @@ require('dotenv').config();
 const app = express();
 app.use(bodyParser.json());
 app.use(helmet());
+app.set('trust proxy', true)
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100, // limit each IP to 100 requests per windowMs
