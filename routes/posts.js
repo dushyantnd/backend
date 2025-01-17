@@ -17,6 +17,33 @@ router.post('/', async (req, res) => {
     }
 });
 
+// API to fetch the latest 1000 articles
+router.get("/articles", async (req, res) => {
+    try {
+      // Fetch the latest 1000 published articles sorted by createdAt
+      const posts = await NewsPost.find({ status: "published" })
+        .populate("category_id", "name")
+        .sort({ createdAt: -1 }) // Sort by createdAt in descending order
+        .limit(1000) // Limit the result to 1000 articles
+        .exec();
+  
+      // Map the posts to the desired format
+      const articles = posts.map((post) => ({
+        title: post.title,
+        description: post.excerpt,
+        link: `https://www.uspupils.com/blog/${post.slug}`,
+        pubDate: post.createdAt.toUTCString(), // RFC-822 format
+        publicationDate: post.createdAt.toISOString().split("T")[0], // YYYY-MM-DD format
+        category: post.category_id ? post.category_id.name : "Uncategorized",
+      }));
+  
+      res.status(200).json({ articles });
+    } catch (error) {
+      console.error("Error fetching articles:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
 // Get all posts (with pagination and sorting)
 router.get('/', async (req, res) => {
     const { page = 1, limit = 9, sortBy = 'createdAt', order = 'desc' } = req.query;
