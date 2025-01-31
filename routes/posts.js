@@ -52,7 +52,7 @@ router.get('/', async (req, res) => {
         const posts = await NewsPost.find()
             .sort({ [sortBy]: order === 'desc' ? -1 : 1 })
             .limit(limit * 1)
-            .skip((page - 1) * limit);
+            .skip((page - 1) * limit).populate('category_id', 'name');;
 
         const totalCount = await NewsPost.countDocuments();
 
@@ -62,7 +62,7 @@ router.get('/', async (req, res) => {
             pagination: {
                 totalCount,
                 totalPages: Math.ceil(totalCount / limit),
-                currentPage: parseInt(page),
+                page: parseInt(page),
                 pageSize: parseInt(limit),
             },
         });
@@ -87,7 +87,7 @@ router.get('/:id', async (req, res) => {
 // Get a single post by slug
 router.get('/slug/:slug', async (req, res) => {
     try {
-        const post = await NewsPost.findOne({ slug: req.params.slug });
+        const post = await NewsPost.findOne({ slug: req.params.slug }).populate('category_id', 'name');;
 
         if (!post) {
             return res.status(404).json({ success: false, message: 'Post not found' });
@@ -108,7 +108,7 @@ router.get('/category/:slug', async (req, res) => {
         const posts = await NewsPost.find({category_id:cat?._id})
             .sort({ [sortBy]: order === 'desc' ? -1 : 1 })
             .limit(limit * 1)
-            .skip((page - 1) * limit);
+            .skip((page - 1) * limit).populate('category_id', 'slug');;
 
         const totalCount = await NewsPost.countDocuments();
 
