@@ -33,10 +33,12 @@ const corsOptions = {
 const postsRoute = require('./routes/posts');
 const categoriesRoute = require('./routes/categories');
 const vidhanRoute = require('./routes/vidhan');
+const webpush = require('./routes/webpush');
+
 
 app.use('/api/posts', postsRoute);
 app.use('/api/categories', categoriesRoute);
-app.use('/api/vidhan', vidhanRoute);
+app.use('/api/webpush', vidhanRoute);
 
 
 // MongoDB connection
